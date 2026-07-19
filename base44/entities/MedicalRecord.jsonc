@@ -1,0 +1,71 @@
+{
+  "name": "MedicalRecord",
+  "type": "object",
+  "properties": {
+    "patient_name": {
+      "type": "string",
+      "title": "Patient Name"
+    },
+    "doctor_name": {
+      "type": "string",
+      "title": "Doctor Name"
+    },
+    "record_type": {
+      "type": "string",
+      "enum": [
+        "Diagnosis",
+        "Prescription",
+        "Lab Result",
+        "Procedure",
+        "Vaccination",
+        "Allergy"
+      ],
+      "title": "Record Type",
+      "default": "Diagnosis"
+    },
+    "diagnosis": {
+      "type": "string",
+      "title": "Diagnosis"
+    },
+    "prescription": {
+      "type": "string",
+      "title": "Prescription"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Date"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "vitals_bp": {
+      "type": "string",
+      "title": "Blood Pressure"
+    },
+    "vitals_temp": {
+      "type": "number",
+      "title": "Temperature (\u00b0C)"
+    },
+    "vitals_weight": {
+      "type": "number",
+      "title": "Weight (kg)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "Archived",
+        "Pending Review"
+      ],
+      "title": "Status",
+      "default": "Active"
+    }
+  },
+  "required": [
+    "patient_name",
+    "record_type",
+    "date"
+  ]
+}

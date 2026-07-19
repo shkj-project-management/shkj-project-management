@@ -1,0 +1,42 @@
+{
+  "name": "CompanyProfile",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Nama Perusahaan"
+    },
+    "logo_url": {
+      "type": "string",
+      "title": "Logo URL"
+    },
+    "address": {
+      "type": "string",
+      "title": "Alamat"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Telepon"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "title": "Email"
+    },
+    "npwp": {
+      "type": "string",
+      "title": "NPWP"
+    },
+    "website": {
+      "type": "string",
+      "title": "Website"
+    },
+    "description": {
+      "type": "string",
+      "title": "Deskripsi"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

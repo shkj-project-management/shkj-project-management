@@ -1,0 +1,34 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "Super Admin",
+        "Project Director",
+        "Project Manager",
+        "Project Officer",
+        "Site Engineer",
+        "Supervisor",
+        "HSE Officer",
+        "Procurement",
+        "Vendor",
+        "Consultant MK",
+        "User Department",
+        "Management",
+        "Viewer"
+      ],
+      "default": "Viewer",
+      "title": "Role"
+    },
+    "department": {
+      "type": "string",
+      "title": "Department"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    }
+  }
+}

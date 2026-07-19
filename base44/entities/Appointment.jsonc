@@ -1,0 +1,67 @@
+{
+  "name": "Appointment",
+  "type": "object",
+  "properties": {
+    "patient_name": {
+      "type": "string",
+      "title": "Patient Name"
+    },
+    "doctor_name": {
+      "type": "string",
+      "title": "Doctor Name"
+    },
+    "department": {
+      "type": "string",
+      "title": "Department"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Date"
+    },
+    "time": {
+      "type": "string",
+      "title": "Time"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Consultation",
+        "Follow-up",
+        "Check-up",
+        "Emergency",
+        "Surgery",
+        "Lab Test"
+      ],
+      "title": "Type",
+      "default": "Consultation"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Scheduled",
+        "Confirmed",
+        "In Progress",
+        "Completed",
+        "Cancelled",
+        "No-show"
+      ],
+      "title": "Status",
+      "default": "Scheduled"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "title": "Duration (min)",
+      "default": 30
+    }
+  },
+  "required": [
+    "patient_name",
+    "doctor_name",
+    "date"
+  ]
+}

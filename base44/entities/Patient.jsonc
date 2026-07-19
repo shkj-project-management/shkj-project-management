@@ -1,0 +1,80 @@
+{
+  "name": "Patient",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "gender": {
+      "type": "string",
+      "enum": [
+        "Male",
+        "Female",
+        "Other"
+      ],
+      "title": "Gender"
+    },
+    "age": {
+      "type": "number",
+      "title": "Age"
+    },
+    "blood_type": {
+      "type": "string",
+      "enum": [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-",
+        "Unknown"
+      ],
+      "title": "Blood Type",
+      "default": "Unknown"
+    },
+    "address": {
+      "type": "string",
+      "title": "Address"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "Inactive",
+        "Admitted",
+        "Discharged"
+      ],
+      "title": "Status",
+      "default": "Active"
+    },
+    "medical_history": {
+      "type": "string",
+      "title": "Medical History"
+    },
+    "emergency_contact": {
+      "type": "string",
+      "title": "Emergency Contact"
+    },
+    "registered_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Registered Date"
+    }
+  },
+  "required": [
+    "name",
+    "phone"
+  ]
+}

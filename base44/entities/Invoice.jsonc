@@ -1,0 +1,78 @@
+{
+  "name": "Invoice",
+  "type": "object",
+  "properties": {
+    "invoice_number": {
+      "type": "string",
+      "title": "Invoice Number"
+    },
+    "patient_name": {
+      "type": "string",
+      "title": "Patient Name"
+    },
+    "service": {
+      "type": "string",
+      "title": "Service"
+    },
+    "amount": {
+      "type": "number",
+      "title": "Amount"
+    },
+    "tax": {
+      "type": "number",
+      "title": "Tax",
+      "default": 0
+    },
+    "discount": {
+      "type": "number",
+      "title": "Discount",
+      "default": 0
+    },
+    "total": {
+      "type": "number",
+      "title": "Total"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Pending",
+        "Paid",
+        "Overdue",
+        "Cancelled",
+        "Partial"
+      ],
+      "title": "Status",
+      "default": "Pending"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Due Date"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "Cash",
+        "Card",
+        "Insurance",
+        "Bank Transfer",
+        "Online"
+      ],
+      "title": "Payment Method"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Notes"
+    },
+    "date_issued": {
+      "type": "string",
+      "format": "date",
+      "title": "Date Issued"
+    }
+  },
+  "required": [
+    "invoice_number",
+    "patient_name",
+    "amount"
+  ]
+}

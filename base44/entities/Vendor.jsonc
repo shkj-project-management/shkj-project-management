@@ -1,0 +1,70 @@
+{
+  "name": "Vendor",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Vendor Name"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Medical Supplies",
+        "Equipment",
+        "Pharmaceuticals",
+        "Laboratory",
+        "IT Services",
+        "Facilities",
+        "Other"
+      ],
+      "title": "Category",
+      "default": "Other"
+    },
+    "contact_person": {
+      "type": "string",
+      "title": "Contact Person"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "Inactive",
+        "Suspended",
+        "Pending"
+      ],
+      "title": "Status",
+      "default": "Active"
+    },
+    "rating": {
+      "type": "number",
+      "title": "Rating (1-5)",
+      "default": 3
+    },
+    "contract_value": {
+      "type": "number",
+      "title": "Contract Value",
+      "default": 0
+    },
+    "address": {
+      "type": "string",
+      "title": "Address"
+    },
+    "tax_id": {
+      "type": "string",
+      "title": "Tax ID"
+    }
+  },
+  "required": [
+    "name",
+    "category"
+  ]
+}

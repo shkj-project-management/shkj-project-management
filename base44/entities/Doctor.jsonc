@@ -1,0 +1,53 @@
+{
+  "name": "Doctor",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Full Name"
+    },
+    "specialty": {
+      "type": "string",
+      "title": "Specialty"
+    },
+    "department": {
+      "type": "string",
+      "title": "Department"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "title": "Email"
+    },
+    "phone": {
+      "type": "string",
+      "title": "Phone"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "On Leave",
+        "Inactive"
+      ],
+      "title": "Status",
+      "default": "Active"
+    },
+    "license_number": {
+      "type": "string",
+      "title": "License Number"
+    },
+    "experience_years": {
+      "type": "number",
+      "title": "Experience (Years)"
+    },
+    "consultation_fee": {
+      "type": "number",
+      "title": "Consultation Fee"
+    }
+  },
+  "required": [
+    "name",
+    "specialty"
+  ]
+}

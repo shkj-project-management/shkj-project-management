@@ -1,0 +1,89 @@
+{
+  "name": "RiskRegister",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Risk Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Financial",
+        "Operational",
+        "Clinical",
+        "Compliance",
+        "Strategic",
+        "Technical",
+        "Other"
+      ],
+      "title": "Category",
+      "default": "Other"
+    },
+    "probability": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High"
+      ],
+      "title": "Probability",
+      "default": "Medium"
+    },
+    "impact": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "title": "Impact",
+      "default": "Medium"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "title": "Risk Level",
+      "default": "Medium"
+    },
+    "mitigation": {
+      "type": "string",
+      "title": "Mitigation Plan"
+    },
+    "owner": {
+      "type": "string",
+      "title": "Risk Owner"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Identified",
+        "Assessed",
+        "Mitigating",
+        "Monitoring",
+        "Closed"
+      ],
+      "title": "Status",
+      "default": "Identified"
+    },
+    "date_identified": {
+      "type": "string",
+      "format": "date",
+      "title": "Date Identified"
+    }
+  },
+  "required": [
+    "title",
+    "risk_level"
+  ]
+}

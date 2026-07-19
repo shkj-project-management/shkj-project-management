@@ -1,0 +1,109 @@
+{
+  "name": "Project",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Nama Proyek"
+    },
+    "code": {
+      "type": "string",
+      "title": "Nomor Proyek"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Planning",
+        "Active",
+        "On Hold",
+        "Completed",
+        "Cancelled"
+      ],
+      "title": "Status",
+      "default": "Planning"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Tanggal Mulai"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date",
+      "title": "Tanggal Selesai"
+    },
+    "durasi_hari": {
+      "type": "number",
+      "title": "Durasi (Hari Kalender)"
+    },
+    "budget": {
+      "type": "number",
+      "title": "Nilai Kontrak",
+      "default": 0
+    },
+    "spent": {
+      "type": "number",
+      "title": "Spent",
+      "default": 0
+    },
+    "progress": {
+      "type": "number",
+      "title": "Progress (%)",
+      "default": 0
+    },
+    "location": {
+      "type": "string",
+      "title": "Lokasi"
+    },
+    "owner": {
+      "type": "string",
+      "title": "Owner"
+    },
+    "konsultan_mk": {
+      "type": "string",
+      "title": "Konsultan MK"
+    },
+    "kontraktor": {
+      "type": "string",
+      "title": "Kontraktor"
+    },
+    "manager": {
+      "type": "string",
+      "title": "Project Manager"
+    },
+    "project_officer": {
+      "type": "string",
+      "title": "Project Officer"
+    },
+    "jenis_proyek": {
+      "type": "string",
+      "enum": [
+        "Renovasi",
+        "Baru",
+        "Addendum",
+        "Maintenance"
+      ],
+      "title": "Jenis Proyek",
+      "default": "Renovasi"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "title": "Priority",
+      "default": "Medium"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    }
+  },
+  "required": [
+    "name",
+    "code"
+  ]
+}

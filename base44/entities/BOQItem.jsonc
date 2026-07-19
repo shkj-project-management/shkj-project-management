@@ -1,0 +1,69 @@
+{
+  "name": "BOQItem",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "title": "Project ID"
+    },
+    "no": {
+      "type": "string",
+      "title": "No."
+    },
+    "item_name": {
+      "type": "string",
+      "title": "Nama Pekerjaan"
+    },
+    "kelompok": {
+      "type": "string",
+      "title": "Kelompok Pekerjaan"
+    },
+    "volume": {
+      "type": "number",
+      "title": "Volume"
+    },
+    "satuan": {
+      "type": "string",
+      "title": "Satuan"
+    },
+    "harga_satuan": {
+      "type": "number",
+      "title": "Harga Satuan"
+    },
+    "total_harga": {
+      "type": "number",
+      "title": "Total Harga"
+    },
+    "bobot": {
+      "type": "number",
+      "title": "Bobot (%)"
+    },
+    "durasi_hari": {
+      "type": "number",
+      "title": "Durasi (Hari)",
+      "default": 1
+    },
+    "start_day": {
+      "type": "number",
+      "title": "Hari Mulai",
+      "default": 1
+    },
+    "progress_percent": {
+      "type": "number",
+      "title": "Progress (%)",
+      "default": 0
+    },
+    "area": {
+      "type": "string",
+      "title": "Area"
+    },
+    "vendor": {
+      "type": "string",
+      "title": "Vendor"
+    }
+  },
+  "required": [
+    "project_id",
+    "item_name"
+  ]
+}

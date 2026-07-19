@@ -1,0 +1,75 @@
+{
+  "name": "IssueLog",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "title": "Title"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "Low",
+        "Medium",
+        "High",
+        "Critical"
+      ],
+      "title": "Severity",
+      "default": "Medium"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Open",
+        "In Progress",
+        "Resolved",
+        "Closed"
+      ],
+      "title": "Status",
+      "default": "Open"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Safety",
+        "Quality",
+        "Technical",
+        "Administrative",
+        "Resource",
+        "Other"
+      ],
+      "title": "Category",
+      "default": "Other"
+    },
+    "assignee": {
+      "type": "string",
+      "title": "Assignee"
+    },
+    "project": {
+      "type": "string",
+      "title": "Project"
+    },
+    "date_reported": {
+      "type": "string",
+      "format": "date",
+      "title": "Date Reported"
+    },
+    "date_resolved": {
+      "type": "string",
+      "format": "date",
+      "title": "Date Resolved"
+    },
+    "location": {
+      "type": "string",
+      "title": "Location"
+    }
+  },
+  "required": [
+    "title",
+    "severity"
+  ]
+}

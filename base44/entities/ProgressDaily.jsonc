@@ -1,0 +1,47 @@
+{
+  "name": "ProgressDaily",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "title": "Project ID"
+    },
+    "boq_item_id": {
+      "type": "string",
+      "title": "BOQ Item ID"
+    },
+    "boq_item_name": {
+      "type": "string",
+      "title": "Item Pekerjaan"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "title": "Tanggal"
+    },
+    "progress_percent": {
+      "type": "number",
+      "title": "Progress (%)"
+    },
+    "volume_done": {
+      "type": "number",
+      "title": "Volume Selesai"
+    },
+    "notes": {
+      "type": "string",
+      "title": "Catatan"
+    },
+    "photo_before": {
+      "type": "string",
+      "title": "Foto Sebelum"
+    },
+    "photo_after": {
+      "type": "string",
+      "title": "Foto Sesudah"
+    }
+  },
+  "required": [
+    "project_id",
+    "date"
+  ]
+}
