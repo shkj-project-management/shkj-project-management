@@ -141,7 +141,9 @@ const auth = {
     if (account) {
       account.resetToken = id();
       saveAccounts(allAccounts);
+      return { resetUrl: `/reset-password?token=${encodeURIComponent(account.resetToken)}` };
     }
+    return null;
   },
   async resetPassword({ resetToken, newPassword }) {
     const allAccounts = accounts();
@@ -174,9 +176,9 @@ export const appClient = {
   entities,
   auth,
   users: {
-    async inviteUser(email, systemRole) {
+    async inviteUser(email, role = "User Department") {
       if (accounts().some((account) => account.email.toLowerCase() === email.toLowerCase())) throw new Error("User already exists");
-      const account = { id: id(), email, password: "welcome", role: systemRole === "admin" ? "Super Admin" : "User Department", verified: true, created_date: now() };
+      const account = { id: id(), email, password: "welcome", role, verified: true, created_date: now() };
       saveAccounts([...accounts(), account]);
       return entities.User.create({ id: account.id, email, role: account.role });
     },
@@ -196,6 +198,3 @@ export const appClient = {
     },
   } },
 };
-
-// Temporary compatibility alias for existing feature modules during migration.
-export const base44 = appClient;

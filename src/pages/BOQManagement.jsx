@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/appClient";
+import { appClient } from "@/api/appClient";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +33,7 @@ export default function BOQManagement() {
   const [deleteItem, setDeleteItem] = useState(null);
 
   useEffect(() => {
-    base44.entities.Project.list("-created_date", 200)
+    appClient.entities.Project.list("-created_date", 200)
       .then((data) => {
         setProjects(data);
         if (data.length > 0) setSelectedProject(data[0].id);
@@ -42,10 +42,10 @@ export default function BOQManagement() {
   }, []);
 
   const loadBOQ = useCallback(async () => {
-    if (!selectedProject) { setBoqItems([]); return; }
+    if (!selectedProject) { setBoqItems([]); setLoading(false); return; }
     setLoading(true);
     try {
-      const items = await base44.entities.BOQItem.filter({ project_id: selectedProject }, "no", 500);
+      const items = await appClient.entities.BOQItem.filter({ project_id: selectedProject }, "no", 500);
       setBoqItems(items);
     } catch { setBoqItems([]); }
     finally { setLoading(false); }
@@ -61,11 +61,11 @@ export default function BOQManagement() {
     if (!file || !selectedProject) return;
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await appClient.integrations.Core.UploadFile({ file });
       setUploading(false);
       setExtracting(true);
 
-      const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
+      const result = await appClient.integrations.Core.ExtractDataFromUploadedFile({
         file_url,
         json_schema: {
           type: "object",
@@ -115,7 +115,7 @@ export default function BOQManagement() {
         progress_percent: 0,
       }));
 
-      await base44.entities.BOQItem.bulkCreate(itemsWithBobot);
+      await appClient.entities.BOQItem.bulkCreate(itemsWithBobot);
       toast.success(`${itemsWithBobot.length} item BOQ berhasil diekstrak dan disimpan`);
       loadBOQ();
     } catch (err) {
@@ -136,7 +136,7 @@ export default function BOQManagement() {
       bobot: Number(((item.total_harga || 0) / total * 100).toFixed(4)),
     }));
     try {
-      await base44.entities.BOQItem.bulkUpdate(updates);
+      await appClient.entities.BOQItem.bulkUpdate(updates);
       toast.success("Bobot berhasil dihitung ulang");
       loadBOQ();
     } catch { toast.error("Gagal menghitung ulang bobot"); }
@@ -158,7 +158,7 @@ export default function BOQManagement() {
     if (!editItem) return;
     setSaving(true);
     try {
-      await base44.entities.BOQItem.update(editItem.id, editForm);
+      await appClient.entities.BOQItem.update(editItem.id, editForm);
       toast.success("Item BOQ diperbarui");
       setEditItem(null);
       loadBOQ();
@@ -169,7 +169,7 @@ export default function BOQManagement() {
   const handleDelete = async () => {
     if (!deleteItem) return;
     try {
-      await base44.entities.BOQItem.delete(deleteItem.id);
+      await appClient.entities.BOQItem.delete(deleteItem.id);
       toast.success("Item BOQ dihapus");
       setDeleteItem(null);
       loadBOQ();
@@ -217,9 +217,9 @@ export default function BOQManagement() {
             </Select>
           </div>
           <div>
-            <Label className="mb-2 block">Upload BOQ (Excel/PDF)</Label>
+            <Label className="mb-2 block">Upload BOQ (CSV)</Label>
             <label>
-              <input type="file" accept=".xlsx,.xls,.pdf,.csv" onChange={handleUpload} className="hidden" disabled={!selectedProject || uploading || extracting} />
+              <input type="file" accept=".csv,text/csv" onChange={handleUpload} className="hidden" disabled={!selectedProject || uploading || extracting} />
               <Button variant="outline" size="sm" className="gap-2 cursor-pointer" disabled={!selectedProject || uploading || extracting} asChild>
                 <span>
                   {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
@@ -265,7 +265,7 @@ export default function BOQManagement() {
           <div className="text-center py-12">
             <FileSpreadsheet className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground">
-              {selectedProject ? "Belum ada item BOQ. Upload file Excel/PDF untuk memulai." : "Pilih proyek terlebih dahulu."}
+              {selectedProject ? "Belum ada item BOQ. Upload file CSV untuk memulai." : "Pilih proyek terlebih dahulu."}
             </p>
           </div>
         ) : (

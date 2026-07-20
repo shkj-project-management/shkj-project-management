@@ -1,13 +1,13 @@
 import React from "react";
 import CrudPage from "@/components/CrudPage";
-import { base44 } from "@/api/appClient";
+import { appClient } from "@/api/appClient";
 import { toast } from "sonner";
 import { Database } from "lucide-react";
 
 async function sendScheduleNotification(formData, isEdit) {
   if (!formData.start_date && !formData.end_date) return;
   try {
-    const users = await base44.entities.User.list();
+    const users = await appClient.entities.User.list();
     const subject = isEdit
       ? `[Update Jadwal] ${formData.name} — ${formData.code}`
       : `[Proyek Baru] ${formData.name} — ${formData.code}`;
@@ -34,7 +34,7 @@ async function sendScheduleNotification(formData, isEdit) {
     for (const user of users) {
       if (user.email) {
         try {
-          await base44.integrations.Core.SendEmail({
+          await appClient.integrations.Core.SendEmail({
             to: user.email,
             subject,
             body,

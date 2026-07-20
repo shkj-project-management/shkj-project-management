@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/appClient";
+import { appClient } from "@/api/appClient";
 import KpiCard from "@/components/KpiCard";
 import GlassCard from "@/components/GlassCard";
 import PageHeader from "@/components/PageHeader";
@@ -64,7 +64,7 @@ export default function ProjectDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.Project.list("-created_date", 200)
+    appClient.entities.Project.list("-created_date", 200)
       .then((data) => {
         setProjects(data);
         if (data.length > 0) setSelectedProject(data[0].id);
@@ -73,14 +73,14 @@ export default function ProjectDashboard() {
   }, []);
 
   const loadData = useCallback(async () => {
-    if (!selectedProject) return;
+    if (!selectedProject) { setProject(null); setBoqItems([]); setIssues([]); setRisks([]); setLoading(false); return; }
     setLoading(true);
     try {
       const [proj, items, issueList, riskList] = await Promise.all([
-        base44.entities.Project.get(selectedProject).catch(() => null),
-        base44.entities.BOQItem.filter({ project_id: selectedProject }, "no", 500).catch(() => []),
-        base44.entities.IssueLog.list("-created_date", 5).catch(() => []),
-        base44.entities.RiskRegister.list("-created_date", 5).catch(() => []),
+        appClient.entities.Project.get(selectedProject).catch(() => null),
+        appClient.entities.BOQItem.filter({ project_id: selectedProject }, "no", 500).catch(() => []),
+        appClient.entities.IssueLog.list("-created_date", 5).catch(() => []),
+        appClient.entities.RiskRegister.list("-created_date", 5).catch(() => []),
       ]);
       setProject(proj);
       setBoqItems(items);

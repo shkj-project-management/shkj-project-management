@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/appClient";
+import { appClient } from "@/api/appClient";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,7 +21,7 @@ export default function ProgressFisik() {
   const [reportDate, setReportDate] = useState(moment().format("YYYY-MM-DD"));
 
   useEffect(() => {
-    base44.entities.Project.list("-created_date", 200)
+    appClient.entities.Project.list("-created_date", 200)
       .then((data) => {
         setProjects(data);
         if (data.length > 0) setSelectedProject(data[0].id);
@@ -30,10 +30,10 @@ export default function ProgressFisik() {
   }, []);
 
   const loadBOQ = useCallback(async () => {
-    if (!selectedProject) { setBoqItems([]); return; }
+    if (!selectedProject) { setBoqItems([]); setLoading(false); return; }
     setLoading(true);
     try {
-      const items = await base44.entities.BOQItem.filter({ project_id: selectedProject }, "no", 500);
+      const items = await appClient.entities.BOQItem.filter({ project_id: selectedProject }, "no", 500);
       setBoqItems(items);
       const updates = {};
       items.forEach((item) => { updates[item.id] = item.progress_percent || 0; });
@@ -97,11 +97,11 @@ export default function ProgressFisik() {
       });
 
       if (updates.length > 0) {
-        await base44.entities.BOQItem.bulkUpdate(updates);
+        await appClient.entities.BOQItem.bulkUpdate(updates);
         if (progressEntries.length > 0) {
-          await base44.entities.ProgressDaily.bulkCreate(progressEntries);
+          await appClient.entities.ProgressDaily.bulkCreate(progressEntries);
         }
-        await base44.entities.Project.update(selectedProject, { progress: Number(currentProgress.toFixed(2)) });
+        await appClient.entities.Project.update(selectedProject, { progress: Number(currentProgress.toFixed(2)) });
         toast.success(`${updates.length} item progress disimpan`);
         loadBOQ();
       } else {

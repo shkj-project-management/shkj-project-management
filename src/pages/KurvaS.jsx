@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/appClient";
+import { appClient } from "@/api/appClient";
 import { Button } from "@/components/ui/button";
 import GlassCard from "@/components/GlassCard";
 import PageHeader from "@/components/PageHeader";
@@ -62,7 +62,7 @@ export default function KurvaS() {
   const [grouping, setGrouping] = useState("weekly");
 
   useEffect(() => {
-    base44.entities.Project.list("-created_date", 200)
+    appClient.entities.Project.list("-created_date", 200)
       .then((data) => {
         setProjects(data);
         if (data.length > 0) setSelectedProject(data[0].id);
@@ -71,12 +71,12 @@ export default function KurvaS() {
   }, []);
 
   const loadData = useCallback(async () => {
-    if (!selectedProject) { setBoqItems([]); setProject(null); return; }
+    if (!selectedProject) { setBoqItems([]); setProject(null); setLoading(false); return; }
     setLoading(true);
     try {
       const [proj, items] = await Promise.all([
-        base44.entities.Project.get(selectedProject).catch(() => null),
-        base44.entities.BOQItem.filter({ project_id: selectedProject }, "no", 500).catch(() => []),
+        appClient.entities.Project.get(selectedProject).catch(() => null),
+        appClient.entities.BOQItem.filter({ project_id: selectedProject }, "no", 500).catch(() => []),
       ]);
       setProject(proj);
       setBoqItems(items);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/appClient";
+import { appClient } from "@/api/appClient";
 import KpiCard from "@/components/KpiCard";
 import GlassCard from "@/components/GlassCard";
 import PageHeader from "@/components/PageHeader";
@@ -41,9 +41,9 @@ export default function Dashboard() {
   const loadData = async () => {
     try {
       const [projects, issues, risks] = await Promise.all([
-        base44.entities.Project.list("-created_date", 200).catch(() => []),
-        base44.entities.IssueLog.list("-created_date", 200).catch(() => []),
-        base44.entities.RiskRegister.list("-created_date", 200).catch(() => []),
+        appClient.entities.Project.list("-created_date", 200).catch(() => []),
+        appClient.entities.IssueLog.list("-created_date", 200).catch(() => []),
+        appClient.entities.RiskRegister.list("-created_date", 200).catch(() => []),
       ]);
 
       const activeProjects = projects.filter((p) => p.status === "Active").length;

@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from "sonner"
+import { lazy, Suspense } from "react";
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -10,23 +11,7 @@ import ScrollToTop from './components/ScrollToTop';
 // Add page imports here
 import ProtectedRoute from '@/components/ProtectedRoute';
 import Layout from '@/components/Layout';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import ForgotPassword from '@/pages/ForgotPassword';
-import ResetPassword from '@/pages/ResetPassword';
-import Dashboard from '@/pages/Dashboard';
-import Reports from '@/pages/Reports';
-import Projects from '@/pages/Projects';
-import Vendors from '@/pages/Vendors';
-import Issues from '@/pages/Issues';
-import Risks from '@/pages/Risks';
 import GenericModule from '@/components/GenericModule';
-import InputDataProject from '@/pages/InputDataProject';
-import BOQManagement from '@/pages/BOQManagement';
-import KurvaS from '@/pages/KurvaS';
-import ProgressFisik from '@/pages/ProgressFisik';
-import ProjectDashboard from '@/pages/ProjectDashboard';
-import Settings from '@/pages/Settings';
 import { Navigate } from 'react-router-dom';
 import {
   Database, Layers, HardHat, Package, Wrench, List, Calculator,
@@ -35,6 +20,23 @@ import {
   CheckCircle, PenTool, History, MessageCircle, Mail, Table,
   Presentation, FileText, Construction, Users,
 } from 'lucide-react';
+
+const Login = lazy(() => import('@/pages/Login'));
+const Register = lazy(() => import('@/pages/Register'));
+const ForgotPassword = lazy(() => import('@/pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('@/pages/ResetPassword'));
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Reports = lazy(() => import('@/pages/Reports'));
+const Projects = lazy(() => import('@/pages/Projects'));
+const Vendors = lazy(() => import('@/pages/Vendors'));
+const Issues = lazy(() => import('@/pages/Issues'));
+const Risks = lazy(() => import('@/pages/Risks'));
+const InputDataProject = lazy(() => import('@/pages/InputDataProject'));
+const BOQManagement = lazy(() => import('@/pages/BOQManagement'));
+const KurvaS = lazy(() => import('@/pages/KurvaS'));
+const ProgressFisik = lazy(() => import('@/pages/ProgressFisik'));
+const ProjectDashboard = lazy(() => import('@/pages/ProjectDashboard'));
+const Settings = lazy(() => import('@/pages/Settings'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
@@ -119,7 +121,9 @@ function App() {
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <ScrollToTop />
-          <AuthenticatedApp />
+          <Suspense fallback={<div className="fixed inset-0 flex items-center justify-center"><div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin" /></div>}>
+            <AuthenticatedApp />
+          </Suspense>
         </Router>
         <Toaster />
         <SonnerToaster theme="dark" position="bottom-right" richColors closeButton />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/appClient";
+import { appClient } from "@/api/appClient";
 import { useAuth } from "@/lib/AuthContext";
 import { ROLES, ROLE_ACCESS_LEVEL, resolveRole } from "@/lib/roles";
 import PageHeader from "@/components/PageHeader";
@@ -103,7 +103,7 @@ function CompanyProfileTab() {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const items = await base44.entities.CompanyProfile.list("-updated_date", 1);
+      const items = await appClient.entities.CompanyProfile.list("-updated_date", 1);
       if (items && items.length > 0) {
         setProfile(items[0]);
       } else {
@@ -129,7 +129,7 @@ function CompanyProfileTab() {
     if (!file) return;
     try {
       setUploading(true);
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await appClient.integrations.Core.UploadFile({ file });
       handleChange("logo_url", file_url);
       toast({ title: "Logo berhasil diunggah" });
     } catch (err) {
@@ -147,9 +147,9 @@ function CompanyProfileTab() {
     try {
       setSaving(true);
       if (profile.id) {
-        await base44.entities.CompanyProfile.update(profile.id, profile);
+        await appClient.entities.CompanyProfile.update(profile.id, profile);
       } else {
-        const created = await base44.entities.CompanyProfile.create(profile);
+        const created = await appClient.entities.CompanyProfile.create(profile);
         setProfile(created);
       }
       toast({ title: "Profil perusahaan berhasil disimpan" });
@@ -294,7 +294,7 @@ function TeamTab({ currentUser, onToast }) {
   const loadMembers = async () => {
     try {
       setLoading(true);
-      const users = await base44.entities.User.list();
+      const users = await appClient.entities.User.list();
       setMembers(users || []);
     } catch (e) {
       // ignore
@@ -314,9 +314,7 @@ function TeamTab({ currentUser, onToast }) {
     }
     try {
       setInviting(true);
-      // Map app role to system role: Super Admin/Project Director -> admin, others -> user
-      const systemRole = ["Super Admin", "Project Director"].includes(inviteRole) ? "admin" : "user";
-      await base44.users.inviteUser(inviteEmail, systemRole);
+      await appClient.users.inviteUser(inviteEmail, inviteRole);
       onToast({ title: `Undangan terkirim ke ${inviteEmail}` });
       setInviteEmail("");
       setInviteRole("User Department");

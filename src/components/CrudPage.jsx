@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { base44 } from "@/api/appClient";
+import { appClient } from "@/api/appClient";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,7 +58,7 @@ export default function CrudPage({
   const [deleteItem, setDeleteItem] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  const entity = base44.entities[entityName];
+  const entity = appClient.entities[entityName];
 
   const loadData = useCallback(async () => {
     setLoading(true);
