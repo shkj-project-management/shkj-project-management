@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/appClient";
 import { useAuth } from "@/lib/AuthContext";
 import { ROLES, ROLE_ACCESS_LEVEL, resolveRole } from "@/lib/roles";
 import PageHeader from "@/components/PageHeader";
@@ -40,10 +40,6 @@ import {
   Upload,
   Shield,
   Mail,
-  Phone,
-  MapPin,
-  Globe,
-  FileText,
   Loader2,
 } from "lucide-react";
 

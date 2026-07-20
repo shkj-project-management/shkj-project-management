@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/appClient";
 import { Button } from "@/components/ui/button";
 import GlassCard from "@/components/GlassCard";
 import PageHeader from "@/components/PageHeader";

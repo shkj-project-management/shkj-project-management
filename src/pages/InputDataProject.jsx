@@ -1,6 +1,6 @@
 import React from "react";
 import CrudPage from "@/components/CrudPage";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/appClient";
 import { toast } from "sonner";
 import { Database } from "lucide-react";
 

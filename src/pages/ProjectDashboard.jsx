@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { base44 } from "@/api/appClient";
 import KpiCard from "@/components/KpiCard";
 import GlassCard from "@/components/GlassCard";
 import PageHeader from "@/components/PageHeader";
 import {
   Activity, DollarSign, AlertCircle, Loader2, TrendingUp, ShieldAlert,
-  FolderKanban, BarChart3,
+  BarChart3,
 } from "lucide-react";
 import {
   ComposedChart, Area, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
-import moment from "moment";
 
 const CHART_COLORS = ["hsl(199 89% 52%)", "hsl(142 71% 45%)", "hsl(38 92% 50%)", "hsl(280 65% 60%)", "hsl(340 75% 55%)"];
 
