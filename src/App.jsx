@@ -33,6 +33,8 @@ const Issues = lazy(() => import('@/pages/Issues'));
 const Risks = lazy(() => import('@/pages/Risks'));
 const InputDataProject = lazy(() => import('@/pages/InputDataProject'));
 const BOQManagement = lazy(() => import('@/pages/BOQManagement'));
+const DailyProgress = lazy(() => import('@/pages/DailyProgress'));
+const PhotoProgress = lazy(() => import('@/pages/PhotoProgress'));
 const KurvaS = lazy(() => import('@/pages/KurvaS'));
 const ProgressFisik = lazy(() => import('@/pages/ProgressFisik'));
 const ProjectDashboard = lazy(() => import('@/pages/ProjectDashboard'));
@@ -98,7 +100,8 @@ const AuthenticatedApp = () => {
           <Route path="/action-plan" element={<GenericModule title="Action Plan" subtitle="Action items, owners, and follow-up tracking" icon={CheckSquare} />} />
           <Route path="/meetings" element={<GenericModule title="Meeting Minutes" subtitle="Meeting records, decisions, and action items" icon={Users} />} />
           <Route path="/documents" element={<GenericModule title="Document Management" subtitle="Document repository and version control" icon={FolderOpen} />} />
-          <Route path="/photo-progress" element={<GenericModule title="Photo Progress" subtitle="Before/after photo documentation" icon={Camera} />} />
+          <Route path="/daily-progress" element={<DailyProgress />} />
+          <Route path="/photo-progress" element={<PhotoProgress />} />
           <Route path="/approvals" element={<GenericModule title="Approval Workflow" subtitle="Multi-step approval routing and tracking" icon={CheckCircle} />} />
           <Route path="/signatures" element={<GenericModule title="Digital Signature" subtitle="Digital signature capture and verification" icon={PenTool} />} />
           <Route path="/audit-log" element={<GenericModule title="Audit Log" subtitle="System activity and change audit trail" icon={History} />} />

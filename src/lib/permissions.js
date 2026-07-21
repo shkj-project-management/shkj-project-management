@@ -61,6 +61,8 @@ export const PERMISSIONS = {
   MODULE_MANPOWER: "module:manpower",
   MODULE_MATERIALS: "module:materials",
   MODULE_EQUIPMENT: "module:equipment",
+  MODULE_DAILY_PROGRESS: "module:daily_progress",
+  MODULE_PHOTO_PROGRESS: "module:photo_progress",
 };
 
 // Role-to-permissions mapping
@@ -82,6 +84,8 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.MODULE_MANPOWER,
     PERMISSIONS.MODULE_MATERIALS,
     PERMISSIONS.MODULE_EQUIPMENT,
+    PERMISSIONS.MODULE_DAILY_PROGRESS,
+    PERMISSIONS.MODULE_PHOTO_PROGRESS,
   ],
 
   "Project Officer": [
@@ -95,6 +99,8 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.MODULE_MANPOWER,
     PERMISSIONS.MODULE_MATERIALS,
     PERMISSIONS.MODULE_EQUIPMENT,
+    PERMISSIONS.MODULE_DAILY_PROGRESS,
+    PERMISSIONS.MODULE_PHOTO_PROGRESS,
   ],
 
   "HSE": [
@@ -248,11 +254,17 @@ export const NAV_GROUPS = [
     ],
   },
   {
+    label: "Progress Tracking",
+    items: [
+      { label: "Daily Progress", path: "/daily-progress", icon: "CalendarClock", level: 3, permissions: [PERMISSIONS.MODULE_DAILY_PROGRESS] },
+      { label: "Photo Progress", path: "/photo-progress", icon: "Camera", level: 3, permissions: [PERMISSIONS.MODULE_PHOTO_PROGRESS] },
+    ],
+  },
+  {
     label: "Collaboration",
     items: [
       { label: "Meeting Minutes", path: "/meetings", icon: "Users", level: 3, permissions: [PERMISSIONS.MODULE_DOCUMENTS] },
       { label: "Document Management", path: "/documents", icon: "FolderOpen", level: 3, permissions: [PERMISSIONS.MODULE_DOCUMENTS] },
-      { label: "Photo Progress", path: "/photo-progress", icon: "Camera", level: 3, permissions: [PERMISSIONS.MODULE_DOCUMENTS] },
     ],
   },
   {
