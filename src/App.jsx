@@ -37,6 +37,7 @@ const KurvaS = lazy(() => import('@/pages/KurvaS'));
 const ProgressFisik = lazy(() => import('@/pages/ProgressFisik'));
 const ProjectDashboard = lazy(() => import('@/pages/ProjectDashboard'));
 const Settings = lazy(() => import('@/pages/Settings'));
+const UserManagement = lazy(() => import('@/pages/UserManagement'));
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
@@ -69,6 +70,7 @@ const AuthenticatedApp = () => {
         <Route element={<Layout />}>
           <Route path="/" element={<Dashboard />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/user-management" element={<UserManagement />} />
           <Route path="/project-dashboard" element={<ProjectDashboard />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/reports/daily" element={<GenericModule title="Daily Report" subtitle="Daily operational reports and field activity summaries" icon={FileText} />} />

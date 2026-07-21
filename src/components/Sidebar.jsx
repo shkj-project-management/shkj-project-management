@@ -11,7 +11,7 @@ import {
   Wrench, List, Calculator, CalendarClock, BarChart3, TrendingUp,
   DollarSign, ShieldCheck, ClipboardCheck, AlertCircle, ShieldAlert,
   CheckSquare, FolderOpen, Camera, CheckCircle, PenTool, History,
-  MessageCircle, Mail, Table, Presentation, Circle, Settings,
+  MessageCircle, Mail, Table, Presentation, Circle, Settings, Shield,
 } from "lucide-react";
 
 const ICON_MAP = {
@@ -20,7 +20,7 @@ const ICON_MAP = {
   Wrench, List, Calculator, CalendarClock, BarChart3, TrendingUp,
   Activity, DollarSign, ShieldCheck, ClipboardCheck, AlertCircle,
   ShieldAlert, CheckSquare, FolderOpen, Camera, CheckCircle, PenTool,
-  History, MessageCircle, Mail, Table, Presentation, Settings,
+  History, MessageCircle, Mail, Table, Presentation, Settings, Shield,
 };
 
 export default function Sidebar({ open, onClose }) {

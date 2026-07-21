@@ -1,6 +1,21 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { appClient } from "@/api/appClient";
 import { seedSuperAdmin } from "@/lib/seed-admin";
+import {
+  resolveRole,
+  getAccessLevel,
+  hasPermission,
+  hasAnyPermission,
+  hasAllPermissions,
+  canManageUsers,
+  canChangeRoles,
+  canAccessSystemSettings,
+  canViewAuditLogs,
+  canManagePermissions,
+  ROLES,
+  ROLE_ACCESS_LEVEL,
+  PERMISSIONS,
+} from "@/lib/permissions";
 
 const AuthContext = createContext();
 
@@ -40,6 +55,24 @@ export const AuthProvider = ({ children }) => {
 
   const navigateToLogin = () => appClient.auth.redirectToLogin();
 
+  // Permission helpers derived from current user
+  const permissionHelpers = useMemo(() => {
+    const role = user?.role || "Viewer";
+    return {
+      role,
+      resolvedRole: resolveRole(role),
+      accessLevel: getAccessLevel(role),
+      canManageUsers: canManageUsers(role),
+      canChangeRoles: canChangeRoles(role),
+      canAccessSystemSettings: canAccessSystemSettings(role),
+      canViewAuditLogs: canViewAuditLogs(role),
+      canManagePermissions: canManagePermissions(role),
+      hasPermission: (perm) => hasPermission(role, perm),
+      hasAnyPermission: (perms) => hasAnyPermission(role, perms),
+      hasAllPermissions: (perms) => hasAllPermissions(role, perms),
+    };
+  }, [user]);
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -53,6 +86,12 @@ export const AuthProvider = ({ children }) => {
       navigateToLogin,
       checkUserAuth,
       checkAppState: checkUserAuth,
+      // Permission helpers
+      ...permissionHelpers,
+      // Expose constants for use in components
+      ROLES,
+      ROLE_ACCESS_LEVEL,
+      PERMISSIONS,
     }}>
       {children}
     </AuthContext.Provider>
