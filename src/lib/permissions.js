@@ -6,6 +6,7 @@ export const ROLES = [
   "Project Manager",
   "Project Officer",
   "HSE",
+  "IPCN",
   "Finance",
   "Viewer",
 ];
@@ -15,6 +16,7 @@ export const ROLE_ACCESS_LEVEL = {
   "Project Manager": 4,
   "Project Officer": 3,
   "HSE": 3,
+  "IPCN": 3,
   "Finance": 2,
   "Viewer": 1,
 };
@@ -63,6 +65,53 @@ export const PERMISSIONS = {
   MODULE_EQUIPMENT: "module:equipment",
   MODULE_DAILY_PROGRESS: "module:daily_progress",
   MODULE_PHOTO_PROGRESS: "module:photo_progress",
+
+  // Sprint 2: HSE Module
+  MODULE_HSE: "module:hse",
+  HSE_SAFETY_INSPECTION: "hse:safety_inspection",
+  HSE_SAFETY_OBSERVATION: "hse:safety_observation",
+  HSE_UNSAFE_ACTION: "hse:unsafe_action",
+  HSE_UNSAFE_CONDITION: "hse:unsafe_condition",
+  HSE_NEAR_MISS: "hse:near_miss",
+  HSE_INCIDENT_REPORT: "hse:incident_report",
+  HSE_PPE_CHECKLIST: "hse:ppe_checklist",
+  HSE_PERMIT_TO_WORK: "hse:permit_to_work",
+  HSE_TOOLBOX_MEETING: "hse:toolbox_meeting",
+  HSE_SAFETY_MEETING: "hse:safety_meeting",
+  HSE_CORRECTIVE_ACTION: "hse:corrective_action",
+  HSE_PREVENTIVE_ACTION: "hse:preventive_action",
+
+  // Sprint 2: IPCN Module
+  MODULE_IPCN: "module:ipcn",
+  IPCN_INSPECTION: "ipcn:inspection",
+  IPCN_HOUSEKEEPING: "ipcn:housekeeping",
+  IPCN_ENVIRONMENTAL: "ipcn:environmental",
+  IPCN_AIR_QUALITY: "ipcn:air_quality",
+  IPCN_WATER_QUALITY: "ipcn:water_quality",
+  IPCN_ISOLATION_AUDIT: "ipcn:isolation_audit",
+  IPCN_HAND_HYGIENE: "ipcn:hand_hygiene",
+  IPCN_STERILIZATION: "ipcn:sterilization",
+
+  // Sprint 2: Action Plan
+  MODULE_ACTION_PLAN: "module:action_plan",
+  ACTION_PLAN_CREATE: "action_plan:create",
+  ACTION_PLAN_EDIT: "action_plan:edit",
+  ACTION_PLAN_APPROVE: "action_plan:approve",
+
+  // Sprint 2: Notification Center
+  MODULE_NOTIFICATION: "module:notification",
+
+  // Sprint 2: Email System
+  MODULE_EMAIL: "module:email",
+
+  // Sprint 2: OTP Verification
+  MODULE_OTP: "module:otp",
+
+  // Sprint 2: Export
+  MODULE_EXPORT: "module:export",
+  EXPORT_PDF: "export:pdf",
+  EXPORT_EXCEL: "export:excel",
+  EXPORT_POWERPOINT: "export:powerpoint",
 };
 
 // Role-to-permissions mapping
@@ -86,6 +135,19 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.MODULE_EQUIPMENT,
     PERMISSIONS.MODULE_DAILY_PROGRESS,
     PERMISSIONS.MODULE_PHOTO_PROGRESS,
+    // Sprint 2
+    PERMISSIONS.MODULE_HSE,
+    PERMISSIONS.MODULE_IPCN,
+    PERMISSIONS.MODULE_ACTION_PLAN,
+    PERMISSIONS.ACTION_PLAN_CREATE,
+    PERMISSIONS.ACTION_PLAN_EDIT,
+    PERMISSIONS.ACTION_PLAN_APPROVE,
+    PERMISSIONS.MODULE_NOTIFICATION,
+    PERMISSIONS.MODULE_EMAIL,
+    PERMISSIONS.MODULE_EXPORT,
+    PERMISSIONS.EXPORT_PDF,
+    PERMISSIONS.EXPORT_EXCEL,
+    PERMISSIONS.EXPORT_POWERPOINT,
   ],
 
   "Project Officer": [
@@ -101,6 +163,14 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.MODULE_EQUIPMENT,
     PERMISSIONS.MODULE_DAILY_PROGRESS,
     PERMISSIONS.MODULE_PHOTO_PROGRESS,
+    // Sprint 2
+    PERMISSIONS.MODULE_ACTION_PLAN,
+    PERMISSIONS.ACTION_PLAN_CREATE,
+    PERMISSIONS.ACTION_PLAN_EDIT,
+    PERMISSIONS.MODULE_EXPORT,
+    PERMISSIONS.EXPORT_PDF,
+    PERMISSIONS.EXPORT_EXCEL,
+    PERMISSIONS.EXPORT_POWERPOINT,
   ],
 
   "HSE": [
@@ -110,6 +180,51 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.MODULE_RISKS,
     PERMISSIONS.MODULE_QUALITY,
     PERMISSIONS.MODULE_DOCUMENTS,
+    // Sprint 2 - HSE Full Access
+    PERMISSIONS.MODULE_HSE,
+    PERMISSIONS.HSE_SAFETY_INSPECTION,
+    PERMISSIONS.HSE_SAFETY_OBSERVATION,
+    PERMISSIONS.HSE_UNSAFE_ACTION,
+    PERMISSIONS.HSE_UNSAFE_CONDITION,
+    PERMISSIONS.HSE_NEAR_MISS,
+    PERMISSIONS.HSE_INCIDENT_REPORT,
+    PERMISSIONS.HSE_PPE_CHECKLIST,
+    PERMISSIONS.HSE_PERMIT_TO_WORK,
+    PERMISSIONS.HSE_TOOLBOX_MEETING,
+    PERMISSIONS.HSE_SAFETY_MEETING,
+    PERMISSIONS.HSE_CORRECTIVE_ACTION,
+    PERMISSIONS.HSE_PREVENTIVE_ACTION,
+    PERMISSIONS.MODULE_ACTION_PLAN,
+    PERMISSIONS.ACTION_PLAN_CREATE,
+    PERMISSIONS.ACTION_PLAN_EDIT,
+    PERMISSIONS.MODULE_EXPORT,
+    PERMISSIONS.EXPORT_PDF,
+    PERMISSIONS.EXPORT_EXCEL,
+    PERMISSIONS.EXPORT_POWERPOINT,
+  ],
+
+  "IPCN": [
+    PERMISSIONS.MODULE_PROJECTS,
+    PERMISSIONS.MODULE_REPORTS,
+    PERMISSIONS.MODULE_ISSUES,
+    PERMISSIONS.MODULE_DOCUMENTS,
+    // Sprint 2 - IPCN Full Access
+    PERMISSIONS.MODULE_IPCN,
+    PERMISSIONS.IPCN_INSPECTION,
+    PERMISSIONS.IPCN_HOUSEKEEPING,
+    PERMISSIONS.IPCN_ENVIRONMENTAL,
+    PERMISSIONS.IPCN_AIR_QUALITY,
+    PERMISSIONS.IPCN_WATER_QUALITY,
+    PERMISSIONS.IPCN_ISOLATION_AUDIT,
+    PERMISSIONS.IPCN_HAND_HYGIENE,
+    PERMISSIONS.IPCN_STERILIZATION,
+    PERMISSIONS.MODULE_ACTION_PLAN,
+    PERMISSIONS.ACTION_PLAN_CREATE,
+    PERMISSIONS.ACTION_PLAN_EDIT,
+    PERMISSIONS.MODULE_EXPORT,
+    PERMISSIONS.EXPORT_PDF,
+    PERMISSIONS.EXPORT_EXCEL,
+    PERMISSIONS.EXPORT_POWERPOINT,
   ],
 
   "Finance": [
@@ -118,6 +233,11 @@ export const ROLE_PERMISSIONS = {
     PERMISSIONS.MODULE_FINANCE,
     PERMISSIONS.MODULE_VENDORS,
     PERMISSIONS.MODULE_DOCUMENTS,
+    // Sprint 2
+    PERMISSIONS.MODULE_EXPORT,
+    PERMISSIONS.EXPORT_PDF,
+    PERMISSIONS.EXPORT_EXCEL,
+    PERMISSIONS.EXPORT_POWERPOINT,
   ],
 
   "Viewer": [
@@ -136,6 +256,7 @@ const ROLE_MIGRATION_MAP = {
   "Site Engineer": "Project Officer",
   "Supervisor": "Project Officer",
   "HSE Officer": "HSE",
+  "IPCN Officer": "IPCN",
   "Procurement": "Finance",
   "Vendor": "Viewer",
   "Consultant MK": "Viewer",
@@ -239,9 +360,47 @@ export const NAV_GROUPS = [
       { label: "Daily Report", path: "/reports/daily", icon: "FileText", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
       { label: "Weekly Report", path: "/reports/weekly", icon: "FileText", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
       { label: "Monthly Report", path: "/reports/monthly", icon: "FileText", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
+      { label: "Executive Report", path: "/reports/executive", icon: "BarChart3", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
+      { label: "Project Report", path: "/reports/project", icon: "FolderKanban", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
+      { label: "Progress Report", path: "/reports/progress", icon: "TrendingUp", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
+      { label: "BOQ Report", path: "/reports/boq", icon: "Calculator", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
+      { label: "Vendor Report", path: "/reports/vendor", icon: "Truck", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
       { label: "Safety Report", path: "/reports/safety", icon: "ShieldCheck", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
       { label: "IPC Report", path: "/reports/ipc", icon: "FileText", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
+      { label: "IPCN Report", path: "/reports/ipcn", icon: "ClipboardCheck", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
+      { label: "Action Plan Report", path: "/reports/action-plan", icon: "CheckSquare", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
+      { label: "Photo Progress Report", path: "/reports/photo-progress", icon: "Camera", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
       { label: "All Reports", path: "/reports", icon: "BarChart3", level: 1, permissions: [PERMISSIONS.MODULE_REPORTS] },
+    ],
+  },
+  {
+    label: "HSE",
+    items: [
+      { label: "Safety Inspection", path: "/hse/safety-inspection", icon: "ClipboardCheck", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Safety Observation", path: "/hse/safety-observation", icon: "Eye", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Unsafe Action", path: "/hse/unsafe-action", icon: "AlertTriangle", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Unsafe Condition", path: "/hse/unsafe-condition", icon: "AlertCircle", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Near Miss", path: "/hse/near-miss", icon: "ShieldAlert", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Incident Report", path: "/hse/incident", icon: "Shield", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "PPE Checklist", path: "/hse/ppe", icon: "HardHat", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Permit To Work", path: "/hse/permit-to-work", icon: "FileText", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Toolbox Meeting", path: "/hse/toolbox-meeting", icon: "Users", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Safety Meeting", path: "/hse/safety-meeting", icon: "MessageCircle", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Corrective Action", path: "/hse/corrective-action", icon: "CheckCircle", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+      { label: "Preventive Action", path: "/hse/preventive-action", icon: "ShieldCheck", level: 3, permissions: [PERMISSIONS.MODULE_HSE] },
+    ],
+  },
+  {
+    label: "IPCN",
+    items: [
+      { label: "IPCN Inspection", path: "/ipcn/inspection", icon: "ClipboardCheck", level: 3, permissions: [PERMISSIONS.MODULE_IPCN] },
+      { label: "Housekeeping Audit", path: "/ipcn/housekeeping", icon: "CheckSquare", level: 3, permissions: [PERMISSIONS.MODULE_IPCN] },
+      { label: "Environmental Monitoring", path: "/ipcn/environmental", icon: "Activity", level: 3, permissions: [PERMISSIONS.MODULE_IPCN] },
+      { label: "Air Quality", path: "/ipcn/air-quality", icon: "Wind", level: 3, permissions: [PERMISSIONS.MODULE_IPCN] },
+      { label: "Water Quality", path: "/ipcn/water-quality", icon: "Droplets", level: 3, permissions: [PERMISSIONS.MODULE_IPCN] },
+      { label: "Isolation Audit", path: "/ipcn/isolation-audit", icon: "Shield", level: 3, permissions: [PERMISSIONS.MODULE_IPCN] },
+      { label: "Hand Hygiene", path: "/ipcn/hand-hygiene", icon: "Hand", level: 3, permissions: [PERMISSIONS.MODULE_IPCN] },
+      { label: "Sterilization", path: "/ipcn/sterilization", icon: "Thermometer", level: 3, permissions: [PERMISSIONS.MODULE_IPCN] },
     ],
   },
   {
@@ -250,7 +409,7 @@ export const NAV_GROUPS = [
       { label: "Quality Inspection", path: "/quality-inspection", icon: "ClipboardCheck", level: 3, permissions: [PERMISSIONS.MODULE_QUALITY] },
       { label: "Issue Log", path: "/issues", icon: "AlertCircle", level: 3, permissions: [PERMISSIONS.MODULE_ISSUES] },
       { label: "Risk Register", path: "/risks", icon: "ShieldAlert", level: 3, permissions: [PERMISSIONS.MODULE_RISKS] },
-      { label: "Action Plan", path: "/action-plan", icon: "CheckSquare", level: 3, permissions: [PERMISSIONS.MODULE_QUALITY] },
+      { label: "Action Plan", path: "/action-plan", icon: "CheckSquare", level: 3, permissions: [PERMISSIONS.MODULE_ACTION_PLAN] },
     ],
   },
   {
@@ -278,16 +437,17 @@ export const NAV_GROUPS = [
   {
     label: "Notifications",
     items: [
+      { label: "Notification Center", path: "/notifications", icon: "Bell", level: 1, permissions: [PERMISSIONS.MODULE_NOTIFICATION] },
       { label: "WhatsApp Notification", path: "/whatsapp", icon: "MessageCircle", level: 4, permissions: [] },
-      { label: "Email Notification", path: "/email-notification", icon: "Mail", level: 4, permissions: [] },
+      { label: "Email Notification", path: "/email-notification", icon: "Mail", level: 4, permissions: [PERMISSIONS.MODULE_EMAIL] },
     ],
   },
   {
     label: "Exports",
     items: [
-      { label: "PDF Export", path: "/export/pdf", icon: "FileText", level: 1, permissions: [] },
-      { label: "Excel Export", path: "/export/excel", icon: "Table", level: 1, permissions: [] },
-      { label: "PowerPoint Export", path: "/export/powerpoint", icon: "Presentation", level: 1, permissions: [] },
+      { label: "PDF Export", path: "/export/pdf", icon: "FileText", level: 1, permissions: [PERMISSIONS.EXPORT_PDF] },
+      { label: "Excel Export", path: "/export/excel", icon: "Table", level: 1, permissions: [PERMISSIONS.EXPORT_EXCEL] },
+      { label: "PowerPoint Export", path: "/export/powerpoint", icon: "Presentation", level: 1, permissions: [PERMISSIONS.EXPORT_POWERPOINT] },
     ],
   },
   {

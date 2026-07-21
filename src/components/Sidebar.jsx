@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/lib/AuthContext";
-import { resolveRole, getNavItems } from "@/lib/roles";
+import { resolveRole, getNavItems } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 import { Activity } from "lucide-react";
 
@@ -12,6 +12,7 @@ import {
   DollarSign, ShieldCheck, ClipboardCheck, AlertCircle, ShieldAlert,
   CheckSquare, FolderOpen, Camera, CheckCircle, PenTool, History,
   MessageCircle, Mail, Table, Presentation, Circle, Settings, Shield,
+  Bell, Eye,
 } from "lucide-react";
 
 const ICON_MAP = {
@@ -21,6 +22,8 @@ const ICON_MAP = {
   Activity, DollarSign, ShieldCheck, ClipboardCheck, AlertCircle,
   ShieldAlert, CheckSquare, FolderOpen, Camera, CheckCircle, PenTool,
   History, MessageCircle, Mail, Table, Presentation, Settings, Shield,
+  Bell, Eye, AlertTriangle: AlertCircle, Wind: Activity, Droplets: Activity,
+  Hand: Users, Thermometer: Activity,
 };
 
 export default function Sidebar({ open, onClose }) {
