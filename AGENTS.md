@@ -11,7 +11,7 @@ Start with `README.md` for local setup, environment variables, and publish workf
 - `src/`: frontend application source.
 - `src/api/appClient.js`: browser-local data, file, email-queue, and authentication service.
 - `vite.config.js`: native Vite configuration and source alias setup.
-- `base44/entities/`: retained JSONC data-model reference for a future server migration.
+- `base44/entities/`: JSONC data-model reference for a future server migration (not required to run the app).
 
 ## Working Notes
 

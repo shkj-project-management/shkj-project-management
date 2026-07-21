@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { appClient } from "@/api/appClient";
+import { seedSuperAdmin } from "@/lib/seed-admin";
 
 const AuthContext = createContext();
 
@@ -14,6 +15,8 @@ export const AuthProvider = ({ children }) => {
     setIsLoadingAuth(true);
     setAuthError(null);
     try {
+      // Seed default Super Admin if none exists
+      seedSuperAdmin();
       const currentUser = await appClient.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
