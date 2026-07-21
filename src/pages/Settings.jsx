@@ -32,6 +32,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 import {
   Building2,
   Users,
@@ -41,11 +42,13 @@ import {
   Shield,
   Mail,
   Loader2,
+  ArrowUpRight,
 } from "lucide-react";
 
 export default function Settings() {
-  const { user } = useAuth();
+  const { user, canManageUsers } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [tab, setTab] = useState("profile");
 
@@ -77,6 +80,21 @@ export default function Settings() {
           <TeamTab currentUser={user} onToast={toast} />
         </TabsContent>
       </Tabs>
+
+      {/* Super Admin link to full User Management */}
+      {canManageUsers && (
+        <div className="flex justify-center">
+          <Button
+            variant="outline"
+            onClick={() => navigate("/user-management")}
+            className="gap-2"
+          >
+            <Shield className="w-4 h-4" />
+            Open Full User Management
+            <ArrowUpRight className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
