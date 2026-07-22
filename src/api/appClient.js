@@ -1429,6 +1429,9 @@ export const appClient = {
     async getQueue() {
       return entities.EmailQueue.list("-created_date", 200);
     },
+    async delete(emailId) {
+      await entities.EmailQueue.delete(emailId);
+    },
     async processQueue() {
       const queue = await entities.EmailQueue.filter({ status: "queued" });
       for (const item of queue) {
