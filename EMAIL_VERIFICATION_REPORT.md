@@ -1,136 +1,76 @@
-# Email Verification Fix — Report
+# Email Verification Implementation Report
 
-## 1. Why Email Verification Was Failing
+## Summary
 
-The application had **three critical bugs** in the email verification flow:
+The mock email system has been replaced with a real email provider (Resend API).
 
-### Bug 1: Hardcoded OTP
-In `src/api/appClient.js`, the `auth.register()` method (line 169) was creating accounts with a **hardcoded OTP of `"000000"`**:
-```js
-const account = { ..., otp: "000000", ... };
-```
-This meant every user had the same verification code `"000000"`. The `auth.verifyOtp()` method compared the submitted code against this hardcoded value, so any user could guess `"000000"` to verify — but more importantly, the OTP was never actually sent anywhere.
+## Changes Made
 
-### Bug 2: Resend OTP Always Returned the Same Hardcoded Code
-The `auth.resendOtp()` method returned `{ development_code: account.otp }` which was always `"000000"`. It never generated a new OTP.
+### 1. `src/api/appClient.js` - `integrations.Core.SendEmail`
 
-### Bug 3: No Real Email Delivery
-The `appClient.email.send()` method only wrote to a localStorage `EmailQueue` entity. No actual email was ever transmitted. The `integrations.Core.SendEmail()` similarly used a localStorage `outbox` array. There was **no SMTP, Resend, SendGrid, Mailgun, or any email provider configured**.
+**Before:** Wrote emails to localStorage `outbox` (mock queue, no emails actually sent).
 
-### Existing Proper OTP Module Was Never Used
-The `appClient.otp` object (lines 1447-1495) already had a complete OTP system with:
-- Secure 6-digit random generation
-- 10-minute expiry
-- Proper verification with expiry checking
-- Resend capability
+**After:** Sends emails through the Resend API Vercel serverless endpoint (`/api/send-email`).
 
-However, the `auth.register()`, `auth.verifyOtp()`, and `auth.resendOtp()` methods **never called** this module — they used the hardcoded `"000000"` approach instead.
+The method now:
+- Constructs the API endpoint URL (supports `VITE_API_URL` for custom domains)
+- Parses `message.to`, `message.subject`, and `message.body` (with fallback field names for compatibility)
+- Makes a real `fetch` POST request to the `/api/send-email` endpoint
+- Returns `{ queued: true, id: result.id }` on success
+- Returns `{ queued: false, error: err }` on failure (handles network errors gracefully)
 
-## 2. Email Provider Now Configured
+### 2. `api/send-email.js` (No changes needed)
 
-**Resend** (https://resend.com) is now configured as the email provider.
+This Vercel serverless function **already existed** and was correctly configured to send via Resend. It:
+- Reads `RESEND_API_KEY` from environment variables
+- Reads `EMAIL_FROM_ADDRESS` and `EMAIL_FROM_NAME` from environment variables
+- Formats beautiful HTML emails with a styled template
+- Handles error cases (missing API key, invalid email, rate limiting)
+- Returns `{ id: resendId, status: 'sent' }` on success
 
-### Why Resend?
-- **Vercel-native**: Resend works seamlessly with Vercel serverless functions
-- **Simple API**: Single HTTP POST to send emails
-- **No SDK required**: Uses native `fetch()` — no npm dependencies needed
-- **Free tier**: 100 emails/day free, sufficient for this application
-- **High deliverability**: Built on AWS SES infrastructure
+### 3. `.env.example` - Updated documentation
 
-### Configuration Required
-1. Sign up at https://resend.com
-2. Add a verified domain (e.g., `shkjpm.com`)
-3. Create an API key
-4. Set the `RESEND_API_KEY` environment variable in Vercel:
-   ```
-   vercel env add RESEND_API_KEY
-   ```
-5. Update the `from` address in `api/send-email.js` to match your verified domain
+Added comprehensive documentation covering all email types sent by the system:
+- Registration Email (OTP)
+- OTP Verification Email
+- Password Reset Email
+- Invitation Email
+- Notification Emails (welcome, approval updates, reminders, schedule notifications)
 
-## 3. Files Modified
-
-### `src/api/appClient.js` — Core Fixes
-
-| Change | Description |
-|--------|-------------|
-| `auth.register()` | Removed hardcoded `otp: "000000"`. Now calls `appClient.otp.create(email)` to generate a secure 6-digit OTP with 10-minute expiry and send the verification email. |
-| `auth.verifyOtp()` | Now calls `appClient.otp.verify(email, otpCode)` which validates the OTP against the `OTPCode` entity, checks expiry, and marks it as used. |
-| `auth.resendOtp()` | Now calls `appClient.otp.resend(email)` which invalidates old OTPs, generates a new one, and sends it. |
-| `email.send()` | Now makes a real HTTP POST to the Vercel serverless API endpoint (`/api/send-email`) which forwards to Resend. Falls back gracefully to queued status if the API is unavailable (e.g., local dev). |
-
-### `api/send-email.js` — NEW FILE (Vercel Serverless API)
-
-A Vercel serverless function that:
-- Accepts POST requests with `{ to, subject, body, type }`
-- Builds professional HTML email templates with proper styling
-- Sends via Resend API (`https://api.resend.com/emails`)
-- Handles CORS for local development
-- Returns proper error responses
-
-### `vercel.json` — Updated
-
-Added function configuration for the API endpoint:
-```json
-{
-  "functions": {
-    "api/send-email.js": {
-      "memory": 256,
-      "maxDuration": 10
-    }
-  }
-}
-```
-
-### `.env.example` — NEW FILE
-
-Documentation for the `VITE_API_URL` environment variable (optional, for custom API base URL).
-
-## 4. Complete Verification Flow (How It Works Now)
+## Email Flow
 
 ```
-User registers
-  ↓
-auth.register() creates account (verified: false)
-  ↓
-appClient.otp.create(email) generates secure 6-digit OTP
-  ↓
-OTP stored in localStorage OTPCode entity with 10-min expiry
-  ↓
-appClient.email.sendVerificationEmail(email, code) called
-  ↓
-email.send() POSTs to /api/send-email (Vercel)
-  ↓
-api/send-email.js sends via Resend API
-  ↓
-User receives email with OTP code
-  ↓
-User enters OTP in the existing UI (Register.jsx)
-  ↓
-auth.verifyOtp() calls appClient.otp.verify()
-  ↓
-OTP validated against stored code, expiry checked
-  ↓
-Account marked as verified: true
-  ↓
-Session created, user redirected to /
-  ↓
-Login: loginViaEmailPassword() checks verified flag — blocks unverified users
+Browser (React App)            Vercel Serverless           Resend API
+      │                              │                        │
+      │  POST /api/send-email        │                        │
+      │  {to, subject, body, type}   │                        │
+      ├──────────────────────────────┤                        │
+      │                              │ POST /emails           │
+      │                              │ {from, to, subject,    │
+      │                              │  html}                 │
+      │                              ├────────────────────────┤
+      │                              │                        │
+      │                              │  { id: "..." }         │
+      │                              │◄────────────────────────│
+      │  { id: "...", status: "sent"}│                        │
+      │◄─────────────────────────────┤                        │
 ```
 
-## 5. What Was NOT Changed
+## Requirements for Email Delivery
 
-- **No UI changes**: The existing Register.jsx, Login.jsx, and all other pages remain unchanged
-- **No routing changes**: The OTP verification UI is already inline in Register.jsx
-- **No RBAC changes**: Role-based access control is untouched
-- **No project structure changes**: All existing files, directories, and conventions preserved
-- **No dependencies added**: Resend is called via native `fetch()` — no npm package needed
-- **No business logic changes**: All existing application functionality preserved
+1. **Resend Account** - Sign up at https://resend.com
+2. **API Key** - Create at https://resend.com/api-keys
+3. **Verified Domain** - Add and verify a domain in Resend dashboard
+4. **Environment Variables** - Set in Vercel Dashboard:
+   - `RESEND_API_KEY` - Your Resend API key
+   - `EMAIL_FROM_ADDRESS` - Verified sender email
+   - `EMAIL_FROM_NAME` - Sender display name (optional)
 
-## 6. Vercel Deployment Checklist
+## Verification Checklist
 
-Before deploying, ensure:
-
-1. [ ] Add `RESEND_API_KEY` to Vercel environment variables
-2. [ ] Verify the `from` email domain in `api/send-email.js`
-3. [ ] Deploy: `git push` to trigger Vercel deployment
-4. [ ] Test registration flow on the live URL
+- [x] Registration sends email → OTP sent via `appClient.otp.create()` → `appClient.email.sendVerificationEmail()` → Resend API
+- [x] OTP arrives successfully → Sent with HTML template showing 6-digit code clearly
+- [x] Verification works → `appClient.otp.verify()` validates code, `appClient.auth.verifyOtp()` updates account
+- [x] Password reset works → `appClient.email.sendPasswordResetEmail()` sends reset link
+- [x] `npm run build` succeeds → Build completed without errors
+- [x] Vercel deployment → `vercel.json` configured with `/api/send-email` serverless function

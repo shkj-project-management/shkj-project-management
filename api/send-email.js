@@ -3,9 +3,16 @@
  *
  * This endpoint is called from the client-side appClient.email.send()
  * to deliver real emails (OTP verification, password reset, notifications).
+ *
+ * Required environment variables (set in Vercel dashboard):
+ *   RESEND_API_KEY       — Resend API key (required)
+ *   EMAIL_FROM_ADDRESS   — Verified sender email in Resend (default: noreply@shkjpm.com)
+ *   EMAIL_FROM_NAME      — Sender name (default: SHKJ Project Management)
  */
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const EMAIL_FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS || 'noreply@shkjpm.com';
+const EMAIL_FROM_NAME = process.env.EMAIL_FROM_NAME || 'SHKJ Project Management';
 
 export default async function handler(req, res) {
   // CORS headers for local dev
@@ -21,8 +28,10 @@ export default async function handler(req, res) {
   }
 
   if (!RESEND_API_KEY) {
+    console.error('[send-email] RESEND_API_KEY is not configured');
     return res.status(500).json({
-      error: 'RESEND_API_KEY not configured. Please set the RESEND_API_KEY environment variable in Vercel.',
+      error: 'Email service is not configured. Please set RESEND_API_KEY in Vercel environment variables.',
+      code: 'MISSING_API_KEY',
     });
   }
 
@@ -30,18 +39,39 @@ export default async function handler(req, res) {
     const { to, subject, body, type } = req.body;
 
     if (!to || !subject || !body) {
-      return res.status(400).json({ error: 'Missing required fields: to, subject, body' });
+      console.error('[send-email] Missing required fields:', { hasTo: !!to, hasSubject: !!subject, hasBody: !!body });
+      return res.status(400).json({
+        error: 'Missing required fields: to, subject, body',
+        code: 'MISSING_FIELDS',
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(to)) {
+      console.error('[send-email] Invalid recipient email format:', to);
+      return res.status(400).json({
+        error: 'Invalid recipient email address',
+        code: 'INVALID_EMAIL',
+      });
     }
 
     // Build HTML email content based on type
     const htmlBody = buildEmailHtml(subject, body, type);
 
     const payload = {
-      from: 'SHKJ Project Management <noreply@shkjpm.com>',
+      from: `${EMAIL_FROM_NAME} <${EMAIL_FROM_ADDRESS}>`,
       to: [to],
       subject,
       html: htmlBody,
     };
+
+    console.log('[send-email] Sending email:', {
+      to,
+      subject,
+      type,
+      from: EMAIL_FROM_ADDRESS,
+    });
 
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -55,16 +85,52 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error('Resend API error:', data);
+      console.error('[send-email] Resend API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: data,
+      });
+
+      // Map Resend error codes to meaningful messages
+      let userMessage = 'Failed to send email';
+      if (response.status === 422) {
+        userMessage = 'Email configuration error. Please verify the sender email domain in Resend.';
+      } else if (response.status === 401) {
+        userMessage = 'Email service authentication failed. Please check RESEND_API_KEY.';
+      } else if (response.status === 429) {
+        userMessage = 'Email service rate limit exceeded. Please try again later.';
+      } else if (data.message) {
+        userMessage = data.message;
+      } else if (data.error) {
+        userMessage = data.error;
+      }
+
       return res.status(response.status).json({
-        error: data.message || data.error || 'Failed to send email',
+        error: userMessage,
+        code: 'RESEND_ERROR',
+        details: process.env.NODE_ENV === 'development' ? data : undefined,
       });
     }
 
+    console.log('[send-email] Email sent successfully:', {
+      to,
+      subject,
+      type,
+      resendId: data.id,
+    });
+
     return res.status(200).json({ id: data.id, status: 'sent' });
   } catch (error) {
-    console.error('Send email error:', error);
-    return res.status(500).json({ error: error.message || 'Internal server error' });
+    console.error('[send-email] Unexpected error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+    return res.status(500).json({
+      error: 'Internal server error while sending email',
+      code: 'INTERNAL_ERROR',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+    });
   }
 }
 

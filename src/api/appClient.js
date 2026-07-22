@@ -2262,10 +2262,27 @@ export const appClient = {
       return { output: { items: parseCsv(text) } };
     },
     async SendEmail(message) {
-      const outbox = read("outbox");
-      outbox.push({ ...message, id: id(), created_date: now() });
-      write("outbox", outbox);
-      return { queued: true };
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+      const endpoint = apiUrl ? `${apiUrl}/api/send-email` : '/api/send-email';
+      const to = message.to || message.email || (Array.isArray(message.recipients) ? message.recipients[0] : message.recipients);
+      const subject = message.subject || message.title || 'Notification';
+      const body = message.body || message.message || message.html || '';
+      const type = message.type || 'notification';
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to, subject, body, type }),
+        });
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({ error: 'Failed to send email' }));
+          return { queued: false, error: err.error };
+        }
+        const result = await response.json();
+        return { queued: true, id: result.id };
+      } catch (err) {
+        return { queued: false, error: err.message };
+      }
     },
   } },
 
