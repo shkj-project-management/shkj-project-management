@@ -166,16 +166,20 @@ const auth = {
   async me() { return accountUser(requireAccount()); },
   async register({ email, password }) {
     if (accounts().some((account) => account.email.toLowerCase() === email.toLowerCase())) throw new Error("An account with this email already exists");
-    const account = { id: id(), email, password, role: "Viewer", verified: false, otp: "000000", created_date: now(), active: true, full_name: "", department_id: null, team_ids: [] };
+    const account = { id: id(), email, password, role: "Viewer", verified: false, created_date: now(), active: true, full_name: "", department_id: null, team_ids: [] };
     saveAccounts([...accounts(), account]);
     await entities.User.create({ id: account.id, email, role: account.role, full_name: account.full_name || "", active: true });
+    // Generate OTP and send verification email
+    await appClient.otp.create(email);
     logActivity("user_registered", { email });
     return { requires_verification: true };
   },
   async verifyOtp({ email, otpCode }) {
     const allAccounts = accounts();
     const account = allAccounts.find((item) => item.email.toLowerCase() === email.toLowerCase());
-    if (!account || otpCode !== account.otp) throw new Error("Invalid verification code");
+    if (!account) throw new Error("Account not found");
+    // Use the proper OTP verification module
+    await appClient.otp.verify(email, otpCode);
     account.verified = true;
     saveAccounts(allAccounts);
     logActivity("user_verified", { email });
@@ -188,7 +192,8 @@ const auth = {
   async resendOtp(email) {
     const account = accounts().find((item) => item.email.toLowerCase() === email.toLowerCase());
     if (!account) throw new Error("Account not found");
-    return { development_code: account.otp };
+    // Regenerate OTP and resend
+    await appClient.otp.resend(email);
   },
   async loginViaEmailPassword(email, password) {
     const account = accounts().find((item) => item.email.toLowerCase() === email.toLowerCase() && item.password === password);
@@ -1373,6 +1378,7 @@ export const appClient = {
   // ============================================================
   email: {
     async send(to, subject, body, options = {}) {
+      const recipient = Array.isArray(to) ? to[0] : to;
       const record = await entities.EmailQueue.create({
         to: Array.isArray(to) ? to : [to],
         subject,
@@ -1382,8 +1388,26 @@ export const appClient = {
         sent_date: null,
         error: null,
       });
-      // In production, this would call an actual email service
-      // For local dev, we queue it
+      // Send via Resend API endpoint (Vercel serverless)
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || '';
+        const endpoint = apiUrl ? `${apiUrl}/api/send-email` : '/api/send-email';
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ to: recipient, subject, body, type: options.type || 'notification' }),
+        });
+        if (response.ok) {
+          const result = await response.json();
+          await entities.EmailQueue.update(record.id, { status: 'sent', sent_date: now(), provider_id: result.id || '' });
+        } else {
+          const err = await response.json().catch(() => ({ error: 'Failed to send email' }));
+          await entities.EmailQueue.update(record.id, { status: 'failed', error: err.error || 'Unknown error' });
+        }
+      } catch (err) {
+        // If API is not available (e.g. local dev without Vercel), mark as queued for later processing
+        await entities.EmailQueue.update(record.id, { status: 'queued', error: err.message });
+      }
       logActivity("email_queued", { to, subject, type: options.type });
       return record;
     },
