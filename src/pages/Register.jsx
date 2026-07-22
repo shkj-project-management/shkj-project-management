@@ -28,8 +28,12 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      await appClient.auth.register({ email, password });
-      setShowOtp(true);
+      const result = await appClient.auth.register({ email, password });
+      if (result.requires_verification) {
+        setShowOtp(true);
+      } else {
+        window.location.href = "/login";
+      }
     } catch (err) {
       setError(err.message || "Registration failed");
     } finally {

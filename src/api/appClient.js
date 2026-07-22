@@ -165,14 +165,30 @@ function parseXLSXArrayBuffer(buffer) {
 const auth = {
   async me() { return accountUser(requireAccount()); },
   async register({ email, password }) {
-    if (accounts().some((account) => account.email.toLowerCase() === email.toLowerCase())) throw new Error("An account with this email already exists");
-    const account = { id: id(), email, password, role: "Viewer", verified: false, created_date: now(), active: true, full_name: "", department_id: null, team_ids: [] };
+    // This bypass is deliberately impossible in production: Vite replaces DEV at build time.
+    // It allows local UI development without a Vercel function or real email provider.
+    const skipEmailConfirmation = import.meta.env.DEV
+      && import.meta.env.VITE_DISABLE_EMAIL_CONFIRMATION === "true";
+    const existingAccount = accounts().find((account) => account.email.toLowerCase() === email.toLowerCase());
+    if (existingAccount) {
+      if (existingAccount.verified) throw new Error("An account with this email already exists");
+      if (skipEmailConfirmation) {
+        existingAccount.verified = true;
+        saveAccounts(accounts().map((account) => account.id === existingAccount.id ? existingAccount : account));
+        return { requires_verification: false };
+      }
+      await appClient.otp.create(existingAccount.email);
+      return { requires_verification: true };
+    }
+    const account = { id: id(), email, password, role: "Viewer", verified: skipEmailConfirmation, created_date: now(), active: true, full_name: "", department_id: null, team_ids: [] };
     saveAccounts([...accounts(), account]);
     await entities.User.create({ id: account.id, email, role: account.role, full_name: account.full_name || "", active: true });
-    // Generate OTP and send verification email
-    await appClient.otp.create(email);
+    if (!skipEmailConfirmation) {
+      // Generate OTP and send verification email through the shared Resend service.
+      await appClient.otp.create(email);
+    }
     logActivity("user_registered", { email });
-    return { requires_verification: true };
+    return { requires_verification: !skipEmailConfirmation };
   },
   async verifyOtp({ email, otpCode }) {
     const allAccounts = accounts();
@@ -224,7 +240,9 @@ const auth = {
     if (account) {
       account.resetToken = id();
       saveAccounts(allAccounts);
-      return { resetUrl: `/reset-password?token=${encodeURIComponent(account.resetToken)}` };
+      const resetUrl = `${window.location.origin}/reset-password?token=${encodeURIComponent(account.resetToken)}`;
+      await appClient.email.sendPasswordResetEmail(account.email, resetUrl);
+      return { resetUrl };
     }
     return null;
   },
@@ -1398,18 +1416,30 @@ export const appClient = {
           body: JSON.stringify({ to: recipient, subject, body, type: options.type || 'notification' }),
         });
         if (response.ok) {
-          const result = await response.json();
+          const result = await response.json().catch(() => {
+            throw new Error("Email service returned an invalid response. In local development, set VITE_API_URL to a deployed API or enable VITE_DISABLE_EMAIL_CONFIRMATION=true.");
+          });
           await entities.EmailQueue.update(record.id, { status: 'sent', sent_date: now(), provider_id: result.id || '' });
+          logActivity("email_sent", { to, subject, type: options.type, providerId: result.id || '' });
+          return { ...record, status: 'sent', sent_date: now(), provider_id: result.id || '' };
         } else {
-          const err = await response.json().catch(() => ({ error: 'Failed to send email' }));
-          await entities.EmailQueue.update(record.id, { status: 'failed', error: err.error || 'Unknown error' });
+          const contentType = response.headers.get('content-type') || '';
+          const payload = contentType.includes('application/json')
+            ? await response.json().catch(() => null)
+            : await response.text().catch(() => '');
+          const providerMessage = typeof payload === 'object' && payload
+            ? payload.error || payload.message
+            : String(payload || '').replace(/\s+/g, ' ').slice(0, 300);
+          const message = providerMessage || `Email service request failed (HTTP ${response.status}).`;
+          await entities.EmailQueue.update(record.id, { status: 'failed', error: message });
+          console.error('[email] Delivery failed', { to: recipient, type: options.type || 'notification', status: response.status, error: message });
+          throw new Error(message);
         }
       } catch (err) {
-        // If API is not available (e.g. local dev without Vercel), mark as queued for later processing
-        await entities.EmailQueue.update(record.id, { status: 'queued', error: err.message });
+        await entities.EmailQueue.update(record.id, { status: 'failed', error: err.message });
+        console.error('[email] Delivery request failed', { to: recipient, type: options.type || 'notification', error: err.message });
+        throw err;
       }
-      logActivity("email_queued", { to, subject, type: options.type });
-      return record;
     },
     async sendVerificationEmail(email, otpCode) {
       return appClient.email.send(email, "Verify Your Account - SHKJ PM",
@@ -2262,27 +2292,12 @@ export const appClient = {
       return { output: { items: parseCsv(text) } };
     },
     async SendEmail(message) {
-      const apiUrl = import.meta.env.VITE_API_URL || '';
-      const endpoint = apiUrl ? `${apiUrl}/api/send-email` : '/api/send-email';
       const to = message.to || message.email || (Array.isArray(message.recipients) ? message.recipients[0] : message.recipients);
       const subject = message.subject || message.title || 'Notification';
       const body = message.body || message.message || message.html || '';
       const type = message.type || 'notification';
-      try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ to, subject, body, type }),
-        });
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({ error: 'Failed to send email' }));
-          return { queued: false, error: err.error };
-        }
-        const result = await response.json();
-        return { queued: true, id: result.id };
-      } catch (err) {
-        return { queued: false, error: err.message };
-      }
+      const result = await appClient.email.send(to, subject, body, { type });
+      return { queued: result.status === 'sent', id: result.provider_id };
     },
   } },
 
